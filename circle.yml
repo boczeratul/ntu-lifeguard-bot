@@ -1,0 +1,31 @@
+machine:
+  node:
+    version: 7.10.0
+  environment:
+    CLOUDSDK_CORE_DISABLE_PROMPTS: 1
+    CLOUDSDK_CORE_PROJECT: slackbot-167506
+
+dependencies:
+  pre:
+    - echo "{\"Slack\":{\"BOT_TOKEN\":\"$SLACK_TOKEN\"},\"MySQL\":{\"host\":\"$MYSQL_HOST\",\"port\":$MYSQL_PORT,\"user\":\"$MYSQL_USER\",\"password\":\"$MYSQL_PASSWORD\",\"database\":\"ntu_lifeguard\",\"multipleStatements\":true}}" >> env.config.json
+    - echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
+    - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+    - sudo /opt/google-cloud-sdk/bin/gcloud config set project $CLOUDSDK_CORE_PROJECT
+
+test:
+  override:
+    # - rm -rf $CIRCLE_ARTIFACTS/coverage
+    - npm run lint
+    # - cp -r coverage $CIRCLE_ARTIFACTS
+    # - node node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
+
+compile:
+  override:
+    - npm run build
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - sudo /opt/google-cloud-sdk/bin/gcloud --quiet app deploy
