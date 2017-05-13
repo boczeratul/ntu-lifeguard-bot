@@ -3,7 +3,7 @@ import { Trainee, Event } from '../model';
 import { Constants } from '../lib';
 
 const parseTimedCommand = (input) => {
-  const commandRegex = /^(\d+-?\d+)\s(\S+)\s(\d{0,2}):?(\d{2})$/g;
+  const commandRegex = /^(\d*-?\d+)\s(\S+)\s(\d{0,2}):?(\d{2})$/g;
 
   const result = commandRegex.exec(input);
   if (!result) {
@@ -23,7 +23,7 @@ const parseTimedCommand = (input) => {
 };
 
 const parseCommentedCommand = (input) => {
-  const commandRegex = /^(\d+-?\d+)\s(\S+)\s(.+)$/g;
+  const commandRegex = /^(\d*-?\d+)\s(\S+)\s(.+)$/g;
 
   const result = commandRegex.exec(input);
   if (!result) {
@@ -40,7 +40,7 @@ const parseCommentedCommand = (input) => {
 };
 
 const parseSimpleCommand = (input) => {
-  const commandRegex = /^(\d+-?\d+)\s(\S+)$/g;
+  const commandRegex = /^(\d*-?\d+)\s(\S+)$/g;
 
   const result = commandRegex.exec(input);
   if (!result) {
