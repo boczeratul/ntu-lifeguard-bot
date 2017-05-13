@@ -7,7 +7,7 @@ machine:
 
 dependencies:
   pre:
-    - echo "{\"Slack\":{\"BOT_TOKEN\":\"$SLACK_TOKEN\"},\"MySQL\":{\"socketPath\":\"$MYSQL_SOCKET\",\"user\":\"$MYSQL_USER\",\"password\":\"$MYSQL_PASSWORD\",\"database\":\"ntu_lifeguard\",\"multipleStatements\":true}}" >> env.config.json
+    - echo "{\"Slack\":{\"BOT_TOKEN\":\"$SLACK_TOKEN\"},\"MySQL\":{\"socketPath\":\"/cloudsql/$MYSQL_SOCKET\",\"user\":\"$MYSQL_USER\",\"password\":\"$MYSQL_PASSWORD\",\"database\":\"ntu_lifeguard\",\"multipleStatements\":true}}" >> env.config.json
     - echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
     - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
     - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
