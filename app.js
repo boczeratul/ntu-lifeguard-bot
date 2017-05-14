@@ -6,10 +6,6 @@ const webClient = new WebClient(EnvConfig.Slack.BOT_TOKEN);
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.status(200).send('歡迎來到漢堡王！').end();
-});
-
 const receivedMessage = (event) => {
   // Putting a stub for now, we'll expand it in the following steps
   webClient.chat.postMessage('@hsuan', `Message data: ${event.message}`);
@@ -31,7 +27,7 @@ app.post('/webhook', (req, res) => {
         if (event.message) {
           receivedMessage(event);
         } else {
-          console.log(`Webhook received unknown event: ${event}`);
+          webClient.chat.postMessage('@hsuan', `Webhook received unknown event: ${event}`);
         }
       });
     });
@@ -45,9 +41,13 @@ app.post('/webhook', (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.status(200).send('歡迎來到漢堡王！').end();
+});
+
 // Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-  console.log('Press Ctrl+C to quit.');
+  webClient.chat.postMessage('@hsuan', `App listening on port ${PORT}`);
+  webClient.chat.postMessage('@hsuan', 'Press Ctrl+C to quit.');
 });
