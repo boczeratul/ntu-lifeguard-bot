@@ -22,6 +22,7 @@
     "@slack/client": "^3.9.0",
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
+    "express": "^4.15.2",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
