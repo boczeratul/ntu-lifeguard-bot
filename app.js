@@ -1,20 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { WebClient } from '@slack/client';
-
 import EnvConfig from './env.config.json';
 import { Logger } from './lib';
 
 const logger = Logger('app.js');
-
-const webClient = new WebClient(EnvConfig.Slack.BOT_TOKEN);
-
 const app = express();
 
-// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
 app.use(bodyParser.json());
 
 const receivedMessage = (event) => {
