@@ -32,7 +32,7 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', (req, res) => {
   const data = req.body;
-  webClient.chat.postMessage('@hsuan', `Message data: ${JSON.stringify(req)}`);
+  webClient.chat.postMessage('@hsuan', `Message data: ${data}`);
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
