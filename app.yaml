@@ -2,5 +2,3 @@ env: flex
 runtime: nodejs
 beta_settings:
   cloud_sql_instances: slackbot-167506:asia-east1:ntu-lifeguard-bot
-manual_scaling:
-  instances: 1
