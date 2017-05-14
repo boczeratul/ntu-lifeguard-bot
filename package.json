@@ -19,6 +19,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@17media/node-logger": "^2.0.4",
     "@slack/client": "^3.9.0",
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",

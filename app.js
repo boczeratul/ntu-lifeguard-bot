@@ -1,7 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { WebClient } from '@slack/client';
+
 import EnvConfig from './env.config.json';
+import { Logger } from './lib';
+
+const logger = Logger('app.js');
 
 const webClient = new WebClient(EnvConfig.Slack.BOT_TOKEN);
 
@@ -14,8 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const receivedMessage = (event) => {
-  // Putting a stub for now, we'll expand it in the following steps
-  webClient.chat.postMessage('@hsuan', `Message data: ${event.message}`);
+  logger.info('Message data', event);
 };
 
 app.get('/privacy', (req, res) => {
@@ -32,7 +35,7 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', (req, res) => {
   const data = req.body;
-  webClient.chat.postMessage('@hsuan', `Message data: ${data}`);
+  logger.info('got webhook data', data);
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
@@ -46,7 +49,7 @@ app.post('/webhook', (req, res) => {
         if (event.message) {
           receivedMessage(event);
         } else {
-          webClient.chat.postMessage('@hsuan', `Webhook received unknown event: ${event}`);
+          logger.info('Webhook received unknown event', event);
         }
       });
     });
@@ -67,6 +70,5 @@ app.get('/', (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  webClient.chat.postMessage('@hsuan', `App listening on port ${PORT}`);
-  webClient.chat.postMessage('@hsuan', 'Press Ctrl+C to quit.');
+  logger.info(`App listening on port ${PORT}`);
 });
