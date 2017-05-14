@@ -18,6 +18,11 @@ const executeCommand = ({ command, input }) => {
 };
 
 const helpOptions = {
+  messages: Object.keys(commands).map((commandKey) => {
+    const command = commands[commandKey];
+
+    return `${command.format}\n${command.example}`;
+  }),
   attachments: Object.keys(commands).map(commandKey => ({
     color: 'warning',
     pretext: commands[commandKey].description,

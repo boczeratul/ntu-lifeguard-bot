@@ -73,13 +73,7 @@ const ground = {
       optional: (hour * 60) + minute,
     }).then(() => ({ trainee, hour, minute })))
     .then(({ trainee, hour, minute }) => ({
-      response: '',
-      options: {
-        attachments: [{
-          color: 'good',
-          text: `已登記 ${trainee.order_temp} ${trainee.name} 陸操 ${hour || 0}時${minute}分`,
-        }],
-      },
+      response: `已登記 ${trainee.order_temp} ${trainee.name} 陸操 ${hour || 0}時${minute}分`,
     })),
 };
 
@@ -98,13 +92,7 @@ const leave = {
       optional: (hour * 60) + minute,
     }).then(() => ({ trainee, hour, minute })))
     .then(({ trainee, hour, minute }) => ({
-      response: '',
-      options: {
-        attachments: [{
-          color: 'good',
-          text: `已登記 ${trainee.order_temp} ${trainee.name} 請假 ${hour || 0}時${minute}分`,
-        }],
-      },
+      response: `已登記 ${trainee.order_temp} ${trainee.name} 請假 ${hour || 0}時${minute}分`,
     })),
 };
 
@@ -123,13 +111,7 @@ const emt = {
       optional,
     }).then(() => ({ trainee, optional })))
     .then(({ trainee, optional }) => ({
-      response: '',
-      options: {
-        attachments: [{
-          color: 'good',
-          text: `已登記 ${trainee.order_temp} ${trainee.name} 受傷狀況\n${optional}`,
-        }],
-      },
+      response: `已登記 ${trainee.order_temp} ${trainee.name} 受傷狀況\n${optional}`,
     })),
 };
 
@@ -148,13 +130,7 @@ const train = {
       optional,
     }).then(() => ({ trainee, optional })))
     .then(({ trainee, optional }) => ({
-      response: '',
-      options: {
-        attachments: [{
-          color: 'good',
-          text: `已登記 ${trainee.order_temp} ${trainee.name} 訓練狀況\n${optional}`,
-        }],
-      },
+      response: `已登記 ${trainee.order_temp} ${trainee.name} 訓練狀況\n${optional}`,
     })),
 };
 
@@ -169,49 +145,33 @@ const report = {
       .then(trainee => ({ trainee })))
     .then(({ trainee }) => Event.queryEvents({ id: trainee.id })
       .then(events => ({ trainee, events })))
-    .then(({ trainee, events }) => ({
-      response: '',
-      options: {
-        attachments: [{
-          color: 'good',
-          text: `${trainee.order_temp} ${trainee.name}`,
-          fields: [
-            {
-              title: '訓練',
-              value: events
-                .filter(event => event.type === Event.Type.Train)
-                .map(event => `[${formatTime(event.timestamp)}] ${event.optional}`)
-                .join('\n'),
-              short: false,
-            },
-            {
-              title: '傷病',
-              value: events
-                .filter(event => event.type === Event.Type.EMT)
-                .map(event => `[${formatTime(event.timestamp)}] ${event.optional}`)
-                .join('\n'),
-              short: false,
-            },
-            {
-              title: '請假',
-              value: events
-                .filter(event => event.type === Event.Type.Leave)
-                .map(event => `[${formatTime(event.timestamp)}] ${event.optional}分鐘`)
-                .join('\n'),
-              short: false,
-            },
-            {
-              title: '陸操',
-              value: events
-                .filter(event => event.type === Event.Type.Ground)
-                .map(event => `[${formatTime(event.timestamp)}] ${event.optional}分鐘`)
-                .join('\n'),
-              short: false,
-            },
-          ],
-        }],
-      },
-    })),
+    .then(({ events }) => {
+      const trainMessage = events
+        .filter(event => event.type === Event.Type.Train)
+        .map(event => `[${formatTime(event.timestamp)}] ${event.optional}`)
+        .join('\n');
+      const emtMessage = events
+        .filter(event => event.type === Event.Type.EMT)
+        .map(event => `[${formatTime(event.timestamp)}] ${event.optional}`)
+        .join('\n');
+      const leaveMessage = events
+        .filter(event => event.type === Event.Type.Leave)
+        .map(event => `[${formatTime(event.timestamp)}] ${event.optional}分鐘`)
+        .join('\n');
+      const groundMessage = events
+        .filter(event => event.type === Event.Type.Ground)
+        .map(event => `[${formatTime(event.timestamp)}] ${event.optional}分鐘`)
+        .join('\n');
+
+      return {
+        response: [
+          `訓練\n${trainMessage}`,
+          `傷病\n${emtMessage}`,
+          `請假\n${leaveMessage}`,
+          `陸操\n${groundMessage}`,
+        ],
+      };
+    }),
 };
 
 export {

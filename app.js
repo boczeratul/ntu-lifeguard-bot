@@ -1,7 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import EnvConfig from './env.config.json';
-import { Logger } from './lib';
+import { Logger, postMessage, parseCommand, Constants } from './lib';
+import { executeCommand, helpOptions } from './command';
 
 const logger = Logger('app.js');
 const app = express();
@@ -11,6 +12,24 @@ app.use(bodyParser.json());
 
 const receivedMessage = (event) => {
   logger.info('Message data', event);
+
+  parseCommand(event.message.text)
+  .then(executeCommand)
+  .then(({ response }) => postMessage(event.sender.id, response))
+  .catch((error) => {
+    switch (error.message || error) {
+      case Constants.INVALID_COMMAND:
+      case Constants.INVALID_INPUT:
+        return postMessage(event.sender.id, helpOptions.messages);
+
+      case Constants.NO_SUCH_TRAINEE:
+        return postMessage(event.sender.id, '找不到這個學員');
+
+      case Constants.COMMAND_FAILED:
+      default:
+        return postMessage(event.sender.id, error.stack);
+    }
+  });
 };
 
 app.get('/privacy', (req, res) => {
