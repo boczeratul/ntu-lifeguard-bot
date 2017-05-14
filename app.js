@@ -11,8 +11,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const receivedMessage = (event) => {
-  logger.info('Message data', event);
-
   parseCommand(event.message.text)
   .then(executeCommand)
   .then(({ response }) => postMessage(event.sender.id, response))
@@ -32,10 +30,6 @@ const receivedMessage = (event) => {
   });
 };
 
-app.get('/privacy', (req, res) => {
-  res.status(200).send('我們收集你提供給機器人的資訊、並只提供台大救生班內部管理使用。').end();
-});
-
 app.get('/webhook', (req, res) => {
   if (req.query['hub.verify_token'] === EnvConfig.Facebook.webhookToken) {
     res.send(req.query['hub.challenge']);
@@ -46,6 +40,7 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', (req, res) => {
   const data = req.body;
+  logger.info('Webhook data', data);
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
@@ -58,19 +53,16 @@ app.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         if (event.message) {
           receivedMessage(event);
-        } else {
-          logger.info('Webhook received unknown event', event);
         }
       });
     });
-
-    // Assume all went well.
-    //
-    // You must send back a 200, within 20 seconds, to let us know
-    // you've successfully received the callback. Otherwise, the request
-    // will time out and we will keep trying to resend.
-    res.sendStatus(200);
   }
+
+  res.sendStatus(200);
+});
+
+app.get('/privacy', (req, res) => {
+  res.status(200).send('我們收集你提供給機器人的資訊、並只提供台大救生班內部管理使用。').end();
 });
 
 app.get('/', (req, res) => {
