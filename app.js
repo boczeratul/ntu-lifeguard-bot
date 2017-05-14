@@ -46,7 +46,6 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', (req, res) => {
   const data = req.body;
-  logger.info('got webhook data', data);
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
