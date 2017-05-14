@@ -11,6 +11,14 @@ const receivedMessage = (event) => {
   webClient.chat.postMessage('@hsuan', `Message data: ${event.message}`);
 };
 
+app.get('/webhook', (req, res) => {
+  if (req.query['hub.verify_token'] === EnvConfig.Facebook.webhookToken) {
+    res.send(req.query['hub.challenge']);
+  } else {
+    res.send('Error, wrong validation token');
+  }
+});
+
 app.post('/webhook', (req, res) => {
   const data = req.body;
   webClient.chat.postMessage('@hsuan', `Message data: ${data}`);
