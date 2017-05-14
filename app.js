@@ -11,6 +11,10 @@ const receivedMessage = (event) => {
   webClient.chat.postMessage('@hsuan', `Message data: ${event.message}`);
 };
 
+app.get('/privacy', (req, res) => {
+  res.status(200).send('我們收集你提供給機器人的資訊、並只提供台大救生班內部管理使用。').end();
+});
+
 app.get('/webhook', (req, res) => {
   if (req.query['hub.verify_token'] === EnvConfig.Facebook.webhookToken) {
     res.send(req.query['hub.challenge']);
